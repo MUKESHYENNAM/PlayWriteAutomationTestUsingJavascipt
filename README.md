@@ -145,3 +145,128 @@ npm test
 
 
 
+Step-by-step breakdown
+Step 1 → package.json (Entry Point)
+"test": "playwright test"
+When you run npm test, it calls the Playwright CLI which looks for playwright.config.js in the root.
+
+Step 2 → playwright.config.js (Configuration)
+
+requires → config/env.config.js (gets URL, timeouts)
+sets     → testDir: 'tests/specs'  ← WHERE to find tests
+sets     → headless: false         ← show browser
+sets     → timeout: 30000         ← 30s max per test
+sets     → screenshot, video      ← on failure
+
+Step 3 → env.config.js (Environment Variables)
+SAUCE_DEMO_URL = 'https://www.saucedemo.com/'
+TIMEOUT = 30000
+
+Single place to change URL/timeouts for all tests.
+
+Step 4 → login.spec.js (Test File)
+
+const { test } = require('../fixtures/test.fixture');  // ← gets custom test
+const testData = require('../../test-data/testData.json'); // ← gets test data
+
+test('TC002 - Login', async ({ loginPage, inventoryPage }) => {
+    // loginPage & inventoryPage come from fixture ↑
+    await loginPage.open();
+    await loginPage.login(testData.users.standardUser.username, ...);
+});
+
+Step 5 → test.fixture.js (Dependency Injection)
+
+const test = base.extend({
+    loginPage: async ({ page }, use) => {
+        await use(new LoginPage(page));  // Creates LoginPage, injects into test
+    },
+    inventoryPage: async ({ page }, use) => {
+        await use(new InventoryPage(page));
+    },
+    // ... same for cartPage, checkoutPage, productDetailPage
+});
+
+This is the bridge between test files and Page Objects.
+
+Step 6 → LoginPage.js (Page Object)
+LoginPage extends BasePage
+    ├── constructor: defines locators (usernameInput, passwordInput, etc.)
+    ├── open(): navigates to SAUCE_DEMO_URL
+    ├── login(): fills username + password + clicks login
+    └── inherits: click(), fill(), getText() from BasePage
+
+Step 7 → testData.json (Test Data)
+
+    Keeps ALL test data separate from test logic:
+  - usernames/passwords
+  - product names
+  - checkout info
+
+   Visual Example: What happens when TC002 runs
+
+   npm test
+  → playwright.config.js loads (gets settings)
+  → finds login.spec.js in tests/specs/
+  → test.fixture.js creates LoginPage(page) + InventoryPage(page)
+  → TC002 starts:
+      1. loginPage.open()
+         → BasePage.navigateTo('https://www.saucedemo.com/')
+      2. loginPage.login('standard_user', 'secret_sauce')
+         → BasePage.fill(usernameInput, 'standard_user')
+         → BasePage.fill(passwordInput, 'secret_sauce')
+         → BasePage.click(loginButton)
+      3. expect(url).toContain('inventory') ✅
+      4. inventoryPage.getPageTitle() → 'Products' ✅
+
+
+
+
+Let me gather all the key files to explain the complete flow.
+
+Read package.json
+
+Read playwright.config.js
+
+Read env.config.js
+
+Read test.fixture.js
+
+Read BasePage.js
+
+Read LoginPage.js
+
+Read testData.json
+
+Here's the complete execution flow of your project, step by step:
+
+🔄 Complete Execution Flow
+📋 Step-by-step breakdown
+Step 1 → package.json (Entry Point)
+When you run npm test, it calls the Playwright CLI which looks for playwright.config.js in the root.
+
+Step 2 → playwright.config.js (Configuration)
+Step 3 → env.config.js (Environment Variables)
+Single place to change URL/timeouts for all tests.
+
+Step 4 → login.spec.js (Test File)
+Step 5 → test.fixture.js (Dependency Injection)
+This is the bridge between test files and Page Objects.
+
+Step 6 → LoginPage.js (Page Object)
+Step 7 → testData.json (Test Data)
+🎯 Visual Example: What happens when TC002 runs
+📁 Project Structure Summary
+File/Folder	Role
+package.json	Entry point — defines npm test command
+playwright.config.js	Settings — browser, timeouts, test folder
+env.config.js	Environment — URLs, timeout values
+test.fixture.js	DI Container — creates & injects page objects
+BasePage.js	Parent class — shared methods (click, fill, etc.)
+LoginPage.js	Page Object — login page locators & actions
+InventoryPage.js	Page Object — products page locators & actions
+CartPage.js	Page Object — cart page locators & actions
+CheckoutPage.js	Page Object — checkout locators & actions
+tests/specs/*.spec.js	Test files — actual test cases
+testData.json	Test data — usernames, products, etc.
+utils.js	Utilities — log(), delay(), helpers
