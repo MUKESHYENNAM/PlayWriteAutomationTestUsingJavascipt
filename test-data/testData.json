@@ -1,0 +1,64 @@
+{
+  "users": {
+    "standardUser": {
+      "username": "standard_user",
+      "password": "secret_sauce"
+    },
+    "lockedOutUser": {
+      "username": "locked_out_user",
+      "password": "secret_sauce"
+    },
+    "problemUser": {
+      "username": "problem_user",
+      "password": "secret_sauce"
+    },
+    "performanceUser": {
+      "username": "performance_glitch_user",
+      "password": "secret_sauce"
+    },
+    "errorUser": {
+      "username": "error_user",
+      "password": "secret_sauce"
+    },
+    "invalidUser": {
+      "username": "invalid_user",
+      "password": "wrong_password"
+    }
+  },
+  "checkout": {
+    "validInfo": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "postalCode": "10001"
+    },
+    "emptyFirstName": {
+      "firstName": "",
+      "lastName": "Doe",
+      "postalCode": "10001"
+    },
+    "emptyLastName": {
+      "firstName": "John",
+      "lastName": "",
+      "postalCode": "10001"
+    },
+    "emptyPostalCode": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "postalCode": ""
+    }
+  },
+  "products": {
+    "backpack": "Sauce Labs Backpack",
+    "bikeLight": "Sauce Labs Bike Light",
+    "boltTShirt": "Sauce Labs Bolt T-Shirt",
+    "fleeceJacket": "Sauce Labs Fleece Jacket",
+    "onesie": "Sauce Labs Onesie",
+    "redTShirt": "Test.allTheThings() T-Shirt (Red)"
+  },
+  "sortOptions": {
+    "nameAZ": "az",
+    "nameZA": "za",
+    "priceLowHigh": "lohi",
+    "priceHighLow": "hilo"
+  }
+}
